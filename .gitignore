@@ -2,6 +2,9 @@
 *_result.xml
 *_result.html
 cov_result/
+result/
+
+*.spec.js.mp4
 
 __pycache__
 .pytest_cache
