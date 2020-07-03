@@ -1,0 +1,7 @@
+.coverage
+*_result.xml
+*_result.html
+cov_result/
+
+__pycache__
+.pytest_cache
