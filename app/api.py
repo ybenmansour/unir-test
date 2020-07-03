@@ -18,7 +18,7 @@ def hello():
 @api_application.route("/calc/add/<op_1>/<op_2>", methods=["GET"])
 def add(op_1, op_2):
     try:
-        num_1, num_2 = util.convert_to_int(op_1), util.convert_to_int(op_2)
+        num_1, num_2 = util.convert_to_number(op_1), util.convert_to_number(op_2)
         return "{}".format(CALCULATOR.add(num_1, num_2))
     except TypeError as e:
         return (str(e), http.client.BAD_REQUEST, CONTENT_TYPE_PLAIN)

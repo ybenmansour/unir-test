@@ -1,4 +1,4 @@
-def convert_to_int(op):
+def convert_to_number(op):
     try:
         if "." in op:
             return float(op)
