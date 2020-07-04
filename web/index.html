@@ -11,6 +11,7 @@
     />
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="constants.js"></script>
     <style>
       html {
         position: relative;
@@ -50,6 +51,7 @@
       </div>
     </main>
     <script>
+      
       var calc = new Vue({
         el: "#calc",
         data: {
@@ -66,7 +68,7 @@
             this.apiCall('substract', this.op1, this.op2);
           },
           apiCall: function(func, op1, op2) {
-            var url = `http://apiserver:5000/calc/${func}/${op1}/${op2}`;
+            var url = `${baseUrl}/calc/${func}/${op1}/${op2}`;
             axios
               .get(url)
               .then(response => {

@@ -1,8 +1,12 @@
+web/constants.js
+
 .coverage
 *_result.xml
 *_result.html
 cov_result/
 result/
+test/e2e/cypress/screenshots
+test/e2e/cypress/videos
 
 *.spec.js.mp4
 
