@@ -3,6 +3,7 @@ web/constants.js
 .coverage
 *_result.xml
 *_result.html
+*_result.txt
 cov_result/
 result/
 test/e2e/cypress/screenshots

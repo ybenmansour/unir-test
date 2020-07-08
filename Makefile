@@ -39,3 +39,5 @@ run-web:
 
 stop-web:
 	docker stop calc-web
+pylint:
+	docker run --rm --volume `pwd`:/opt/calc --env PYTHONPATH=/opt/calc -w /opt/calc calculator-app:latest pylint app/ | tee results/pylint_result.txt
