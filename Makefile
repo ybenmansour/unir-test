@@ -39,5 +39,18 @@ run-web:
 
 stop-web:
 	docker stop calc-web
+
+
+start-sonar-server:
+	docker network create calc-sonar || true
+	docker run -d --rm --stop-timeout 60 --network calc-sonar --name sonarqube-server -p 9000:9000 --volume `pwd`/sonar/data:/opt/sonarqube/data --volume `pwd`/sonar/logs:/opt/sonarqube/logs sonarqube:8.3.1-community
+
+stop-sonar-server:
+	docker stop sonarqube-server
+	docker network rm calc-sonar || true
+
+start-sonar-scanner:
+	docker run --rm --network calc-sonar -v `pwd`:/usr/src sonarsource/sonar-scanner-cli
+
 pylint:
 	docker run --rm --volume `pwd`:/opt/calc --env PYTHONPATH=/opt/calc -w /opt/calc calculator-app:latest pylint app/ | tee results/pylint_result.txt

@@ -13,3 +13,6 @@ test/e2e/cypress/videos
 
 __pycache__
 .pytest_cache
+
+sonar/
+.scannerwork/
