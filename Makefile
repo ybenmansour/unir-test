@@ -18,6 +18,7 @@ test-unit:
 
 test-behavior:
 	docker run --rm --volume `pwd`:/opt/calc --env PYTHONPATH=/opt/calc -w /opt/calc calculator-app:latest behave --junit --junit-directory results/  --tags ~@wip test/behavior/
+	docker run --rm --volume `pwd`:/opt/calc --env PYTHONPATH=/opt/calc -w /opt/calc calculator-app:latest bash test/behavior/junit-reports.sh
 	
 test-api:
 	docker network create calc-test-api || true
@@ -29,7 +30,6 @@ test-api:
 	docker network rm calc-test-api
 
 test-e2e:
-	docker network create calc-test-e2e
 	docker network create calc-test-e2e || true
 	docker stop apiserver || true
 	docker rm --force apiserver || true
