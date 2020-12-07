@@ -1,5 +1,7 @@
 FROM openjdk:8-jre
 
+# based on https://github.com/vepo/jmeter-docker
+
 ENV JMETER_VERSION 5.4
 
 RUN mkdir /jmeter \
