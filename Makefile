@@ -87,12 +87,15 @@ stop-wiremock:
 	docker stop calculator-wiremock || true
 
 ZAP_API_KEY := my_zap_api_key
+ZAP_API_URL := http://zap-node:8080/
+ZAP_TARGET_URL := http://calc-web/
 zap-scan:
 	docker network create calc-test-zap || true
 	docker run -d --rm --network calc-test-zap --volume `pwd`:/opt/calc --name apiserver --network-alias apiserver --env PYTHONPATH=/opt/calc --env FLASK_APP=app/api.py -p 5000:5000 -w /opt/calc calculator-app:latest flask run --host=0.0.0.0
 	docker run -d --rm --network calc-test-zap --volume `pwd`/web:/usr/share/nginx/html  --volume `pwd`/web/constants.test.js:/usr/share/nginx/html/constants.js --name calc-web -p 80:80 nginx
 	docker run -d --rm --network calc-test-zap --name zap-node -u zap -p 8080:8080 -i owasp/zap2docker-stable zap.sh -daemon -host 0.0.0.0 -port 8080 -config api.addrs.addr.name=.* -config api.addrs.addr.regex=true -config api.key=$(ZAP_API_KEY)
-	docker run --rm --volume `pwd`:/opt/calc --network calc-test-zap --env PYTHONPATH=/opt/calc --env ZAP_API_KEY=$(ZAP_API_KEY) --env ZAP_API_URL=http://zap-node:8080/ --env TARGET_URL=http://calc-web/ -w /opt/calc calculator-app:latest pytest --junit-xml=results/sec_result.xml -m security  || true
+	sleep 20
+	docker run --rm --volume `pwd`:/opt/calc --network calc-test-zap --env PYTHONPATH=/opt/calc --env ZAP_API_KEY=$(ZAP_API_KEY) --env ZAP_API_URL=$(ZAP_API_URL) --env TARGET_URL=$(ZAP_TARGET_URL) -w /opt/calc calculator-app:latest pytest --junit-xml=results/sec_result.xml -m security  || true
 	docker run --rm --volume `pwd`:/opt/calc --env PYTHONPATH=/opt/calc -w /opt/calc calculator-app:latest junit2html results/sec_result.xml results/sec_result.html
 	docker stop apiserver || true
 	docker stop calc-web || true
