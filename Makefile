@@ -43,12 +43,25 @@ test-e2e:
 	docker run --rm --volume `pwd`:/opt/calc --env PYTHONPATH=/opt/calc -w /opt/calc calculator-app:latest junit2html results/cypress_result.xml results/cypress_result.html
 	docker network rm calc-test-e2e
 
+test-e2e-wiremock:
+	docker network create calc-test-e2e-wiremock || true
+	docker stop apiwiremock || true
+	docker rm --force apiwiremock || true
+	docker stop calc-web || true
+	docker rm --force calc-web || true
+	docker run -d --rm --name apiwiremock --volume `pwd`/test/wiremock/stubs:/home/wiremock --network calc-test-e2e-wiremock -p 8080:8080 -p 8443:8443 calculator-wiremock
+	docker run -d --rm --volume `pwd`/web:/usr/share/nginx/html --volume `pwd`/web/constants.wiremock.js:/usr/share/nginx/html/constants.js --network calc-test-e2e-wiremock --name calc-web -p 80:80 nginx
+	docker run --rm --volume `pwd`/test/e2e/cypress.json:/cypress.json --volume `pwd`/test/e2e/cypress:/cypress --volume `pwd`/results:/results --network calc-test-e2e-wiremock cypress/included:4.9.0 --browser chrome || true
+	docker rm --force apiwiremock
+	docker rm --force calc-web
+	docker run --rm --volume `pwd`:/opt/calc --env PYTHONPATH=/opt/calc -w /opt/calc calculator-app:latest junit2html results/cypress_result.xml results/cypress_result.html
+	docker network rm calc-test-e2e-wiremock
+
 run-web:
 	docker run --rm --volume `pwd`/web:/usr/share/nginx/html  --volume `pwd`/web/constants.local.js:/usr/share/nginx/html/constants.js --name calc-web -p 80:80 nginx
 
 stop-web:
 	docker stop calc-web
-
 
 start-sonar-server:
 	docker network create calc-sonar || true
@@ -63,3 +76,12 @@ start-sonar-scanner:
 
 pylint:
 	docker run --rm --volume `pwd`:/opt/calc --env PYTHONPATH=/opt/calc -w /opt/calc calculator-app:latest pylint app/ | tee results/pylint_result.txt
+
+build-wiremock:
+	docker build -t calculator-wiremock -f test/wiremock/Dockerfile test/wiremock/
+
+start-wiremock:
+	docker run -d --rm --name calculator-wiremock --volume `pwd`/test/wiremock/stubs:/home/wiremock -p 8080:8080 -p 8443:8443 calculator-wiremock
+
+stop-wiremock:
+	docker stop calculator-wiremock || true
