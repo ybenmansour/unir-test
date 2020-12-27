@@ -1,7 +1,12 @@
 import unittest
+from unittest.mock import patch
 import pytest
 
 from app.calc import Calculator
+
+
+def mocked_validation(*args, **kwargs):
+    return True
 
 
 @pytest.mark.unit
@@ -38,6 +43,13 @@ class TestCalculate(unittest.TestCase):
         self.assertRaises(TypeError, self.calc.divide, 2, -0)
         self.assertRaises(TypeError, self.calc.divide, 0, 0)
         self.assertRaises(TypeError, self.calc.divide, "0", 0)
+
+    @patch('app.util.validate_permissions', side_effect=mocked_validation, create=True)
+    def test_multiply_method_returns_correct_result(self, _validate_permissions):
+        self.assertEqual(4, self.calc.multiply(2, 2))
+        self.assertEqual(0, self.calc.multiply(1, 0))
+        self.assertEqual(0, self.calc.multiply(-1, 0))
+        self.assertEqual(-2, self.calc.multiply(-1, 2))
 
 
 if __name__ == "__main__":  # pragma: no cover
